@@ -109,7 +109,8 @@ class SimTelFile(EventIOFile):
         found_all_telescopes = False
         while not (any(o for o in check) and found_all_telescopes):
             self.next_low_level()
-
+                
+            
             check = [
                 self.current_mc_shower,
                 self.current_array_event,
@@ -119,6 +120,7 @@ class SimTelFile(EventIOFile):
             ]
 
             # check if we found all the descriptions of all telescopes
+            # print("self.n_telescopes:", self.n_telescopes)
             if self.n_telescopes is not None:
                 found = sum(
                     len(t) == len(telescope_descriptions_types)
@@ -196,10 +198,11 @@ class SimTelFile(EventIOFile):
         elif isinstance(o, iact.AtmosphericProfile):
             self.atmospheric_profiles.append(o.parse())
         else:
-            raise Exception(
-                'object type encountered, which is no handled'
-                'at the moment: {}'.format(o)
-            )
+            self.next_low_level()
+            # raise Exception(
+            #     'object type encountered, which is no handled'
+            #     'at the moment: {}'.format(o)
+            # )
 
     def iter_mc_events(self):
         while True:
@@ -211,6 +214,7 @@ class SimTelFile(EventIOFile):
                 yield next_event
 
     def try_build_mc_event(self):
+        print("next event", self.current_mc_event)
         if self.current_mc_event:
 
             event_data = {
